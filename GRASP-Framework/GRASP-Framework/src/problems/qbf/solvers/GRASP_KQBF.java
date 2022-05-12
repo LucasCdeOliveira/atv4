@@ -1,6 +1,7 @@
 package problems.qbf.solvers;
 
 import metaheuristics.grasp.AbstractGRASP;
+import problems.qbf.BiasFunction;
 import problems.qbf.KQBF;
 import problems.qbf.KQBF_Inverse;
 import problems.qbf.QBF_Inverse;
@@ -94,6 +95,59 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	public Solution<Integer> createEmptySol() {
 		Solution<Integer> sol = new Solution<Integer>();
 		sol.cost = 0.0;
+		return sol;
+	}
+
+	@Override
+	public Solution<Integer> constructiveHeuristic() {
+
+		CL = makeCL();
+		RCL = makeRCL();
+		sol = createEmptySol();
+		cost = Double.POSITIVE_INFINITY;
+
+		/* Main loop, which repeats until the stopping criteria is reached. */
+		while (!constructiveStopCriteria()) {
+
+			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
+			cost = ObjFunction.evaluate(sol);
+			updateCL();
+
+			/*
+			 * Explore all candidate elements to enter the solution, saving the
+			 * highest and lowest cost variation achieved by the candidates.
+			 */
+			for (Integer c : CL) {
+				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				if (deltaCost < minCost)
+					minCost = deltaCost;
+				if (deltaCost > maxCost)
+					maxCost = deltaCost;
+			}
+
+			/*
+			 * Among all candidates, insert into the RCL those with the highest
+			 * performance using parameter alpha as threshold.
+			 */
+			for (Integer c : CL) {
+				Double deltaCost = ObjFunction.evaluateInsertionCost(c, sol);
+				if (deltaCost <= minCost + alpha * (maxCost - minCost)) {
+					RCL.add(c);
+				}
+			}
+
+			/* Choose a candidate from the Bias Function from the RCL */
+			BiasFunction biasFunction = new BiasFunction(RCL);
+			Integer inCand = biasFunction.getElement();
+			//Change to adapt to KQBF, with QBF this is always true
+			if(ObjFunction.shouldInsert(inCand, sol)){
+				CL.remove(inCand);
+				sol.add(inCand);
+				ObjFunction.evaluate(sol);
+				RCL.clear();
+			}
+
+		}
 		return sol;
 	}
 
