@@ -8,6 +8,7 @@ import solutions.Solution;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -105,14 +106,20 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	 */
 	@Override
 	public Solution<Integer> localSearch() {
+		return firstLocalSearch();
+	}
 
+	/**
+	 * Best improving method
+	 */
+	public Solution<Integer> bestLocalSearch() {
 		Double minDeltaCost;
 		Integer bestCandIn = null, bestCandOut = null;
 
 		do {
 			minDeltaCost = Double.POSITIVE_INFINITY;
 			updateCL();
-				
+
 			// Evaluate insertions
 			for (Integer candIn : CL) {
 				double deltaCost = ObjFunction.evaluateInsertionCost(candIn, sol);
@@ -165,20 +172,109 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	}
 
 	/**
+	 * First improving method
+	 */
+	public Solution<Integer> firstLocalSearch() {
+		Double minDeltaCost;
+		Integer firstCandIn = null, firstCandOut = null;
+
+		minDeltaCost = Double.POSITIVE_INFINITY;
+		updateCL();
+		Boolean needRemoveCandIn = false;
+		// Evaluate insertions
+		do {
+			for (Integer candIn : CL) {
+				double deltaCost = ObjFunction.evaluateInsertionCost(candIn, sol);
+				if (deltaCost < minDeltaCost) {
+					minDeltaCost = deltaCost;
+					firstCandIn = candIn;
+					firstCandOut = null;
+					if(ObjFunction.shouldInsert(firstCandIn, sol)) {
+						break;
+					}
+					else {
+						needRemoveCandIn = true;
+						break;
+					}
+				}
+			}
+			if(firstCandIn != null) {
+				if(!needRemoveCandIn) {
+					sol.add(firstCandIn);
+					CL.remove(firstCandIn);
+					return null;
+				}
+				CL.remove(firstCandIn);
+				needRemoveCandIn = false;
+			}
+			// Evaluate removals
+			for (Integer candOut : sol) {
+				double deltaCost = ObjFunction.evaluateRemovalCost(candOut, sol);
+				if (deltaCost < minDeltaCost) {
+					minDeltaCost = deltaCost;
+					firstCandIn = null;
+					firstCandOut = candOut;
+					break;
+				}
+			}
+			if(firstCandOut != null) {
+				sol.remove(firstCandOut);
+				CL.add(firstCandOut);
+				return null;
+			}
+			// Evaluate exchanges
+			boolean found = false;
+			for (Integer candIn : CL) {
+				if(found) {
+					break;
+				}
+				for (Integer candOut : sol) {
+					double deltaCost = ObjFunction.evaluateExchangeCost(candIn, candOut, sol);
+					if (deltaCost < minDeltaCost) {
+						minDeltaCost = deltaCost;
+						firstCandIn = candIn;
+						firstCandOut = candOut;
+						found = true;
+						break;
+					}
+				}
+			}
+			if(firstCandIn != null && firstCandOut != null) {
+				//Remove
+				sol.remove(firstCandOut);
+				if (ObjFunction.shouldInsert(firstCandIn, sol)) {
+					sol.add(firstCandIn);
+					CL.remove(firstCandIn);
+					CL.add(firstCandOut);
+					return null;
+				} else {
+					sol.add(firstCandOut);
+				}
+			}
+		} while(minDeltaCost < -Double.MIN_VALUE);
+
+		return null;
+	}
+
+	/**
 	 * A main method used for testing the GRASP metaheuristic.
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-
-		long startTime = System.currentTimeMillis();
-		GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf040");
-		Solution<Integer> bestSol = grasp.solve();
-		System.out.println("maxVal = " + bestSol);
-		KQBF evaluateCost = new KQBF("instances/kqbf/kqbf040");
-		System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
+		List<String> instancias = List.of("020", "040", "060", "080", "100", "200", "400");
+		for(String instancia: instancias) {
+			System.out.println("Running for instance " + instancia);
+			long startTime = System.currentTimeMillis();
+			GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf" + instancia);
+			Solution<Integer> bestSol = grasp.solve();
+			System.out.println("maxVal = " + bestSol);
+			KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
+			System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
+			System.out.println("#########################################################################################\n");
+		}
 
 	}
 

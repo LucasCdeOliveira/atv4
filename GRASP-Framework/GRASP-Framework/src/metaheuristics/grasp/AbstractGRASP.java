@@ -23,7 +23,7 @@ public abstract class AbstractGRASP<E> {
 	 * flag that indicates whether the code should print more information on
 	 * screen
 	 */
-	public static boolean verbose = true;
+	public static boolean verbose = false;
 
 	/**
 	 * a random number generator
@@ -201,7 +201,6 @@ public abstract class AbstractGRASP<E> {
 	 * @return The best feasible solution obtained throughout all iterations.
 	 */
 	public Solution<E> solve() {
-
 		bestSol = createEmptySol();
 		for (int i = 0; i < iterations; i++) {
 			constructiveHeuristic();
