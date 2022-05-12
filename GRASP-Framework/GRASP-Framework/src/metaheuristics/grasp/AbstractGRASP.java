@@ -24,7 +24,7 @@ public abstract class AbstractGRASP<E> {
 	 * flag that indicates whether the code should print more information on
 	 * screen
 	 */
-	public static boolean verbose = true;
+	public static boolean verbose = false;
 
 	/**
 	 * a random number generator
@@ -157,7 +157,7 @@ public abstract class AbstractGRASP<E> {
 		while (!constructiveStopCriteria()) {
 
 			i += 1;
-			if(i%porcento == 0)
+			if(i % porcento == 0)
 				localSearch();
 
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
