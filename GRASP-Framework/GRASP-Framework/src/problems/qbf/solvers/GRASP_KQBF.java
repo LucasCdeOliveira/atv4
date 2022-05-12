@@ -169,12 +169,12 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-
+		String instancia = "200";
 		long startTime = System.currentTimeMillis();
-		GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf040");
+		GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf" + instancia);
 		Solution<Integer> bestSol = grasp.solve();
 		System.out.println("maxVal = " + bestSol);
-		KQBF evaluateCost = new KQBF("instances/kqbf/kqbf040");
+		KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
 		System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;

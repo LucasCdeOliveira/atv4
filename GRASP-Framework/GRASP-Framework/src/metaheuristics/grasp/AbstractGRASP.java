@@ -5,6 +5,7 @@ package metaheuristics.grasp;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.lang.Math;
 
 import problems.Evaluator;
 import solutions.Solution;
@@ -144,12 +145,20 @@ public abstract class AbstractGRASP<E> {
 	public Solution<E> constructiveHeuristic() {
 
 		CL = makeCL();
+		Integer clSize = CL.size();
+		Integer porcento = (int)Math.ceil(clSize * 0.4);
+		Integer i = 0;
 		RCL = makeRCL();
 		sol = createEmptySol();
 		cost = Double.POSITIVE_INFINITY;
 
+
 		/* Main loop, which repeats until the stopping criteria is reached. */
 		while (!constructiveStopCriteria()) {
+
+			i += 1;
+			if(i%porcento == 0)
+				localSearch();
 
 			double maxCost = Double.NEGATIVE_INFINITY, minCost = Double.POSITIVE_INFINITY;
 			cost = ObjFunction.evaluate(sol);
@@ -203,9 +212,9 @@ public abstract class AbstractGRASP<E> {
 	public Solution<E> solve() {
 
 		bestSol = createEmptySol();
-		for (int i = 0; i < iterations; i++) {
+		for (int i = 0; i < iterations/10; i++) {
 			constructiveHeuristic();
-			localSearch();
+			//localSearch();
 			if (bestSol.cost > sol.cost) {
 				bestSol = new Solution<E>(sol);
 				if (verbose)
@@ -224,7 +233,7 @@ public abstract class AbstractGRASP<E> {
 	 * @return true if the criteria is met.
 	 */
 	public Boolean constructiveStopCriteria() {
-		return (cost > sol.cost) ? false : true;
+		return cost <= sol.cost;
 	}
 
 }
