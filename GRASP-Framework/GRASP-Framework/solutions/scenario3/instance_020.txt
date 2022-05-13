@@ -1,0 +1,5 @@
+Running for instance 020
+maxVal = Solution: cost=[-120.0], size=[7], elements=[11, 4, 2, 14, 16, 15, 3]
+weight of solution = 54.0
+Time = 0.474 seg
+#########################################################################################

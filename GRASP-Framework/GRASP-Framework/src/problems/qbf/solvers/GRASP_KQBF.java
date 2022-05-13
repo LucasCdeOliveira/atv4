@@ -3,11 +3,13 @@ package problems.qbf.solvers;
 import metaheuristics.grasp.AbstractGRASP;
 import problems.qbf.KQBF;
 import problems.qbf.KQBF_Inverse;
-import problems.qbf.QBF_Inverse;
 import solutions.Solution;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -106,7 +108,8 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	 */
 	@Override
 	public Solution<Integer> localSearch() {
-		return firstLocalSearch();
+		//return firstLocalSearch();
+		return bestLocalSearch();
 	}
 
 	/**
@@ -261,19 +264,42 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-		List<String> instancias = List.of("020", "040", "060", "080", "100", "200", "400");
+		List<String> instancias = Arrays.asList(new String[]{"020", "040", "060", "080", "100", "200", "400"});
+
 		for(String instancia: instancias) {
-			System.out.println("Running for instance " + instancia);
-			long startTime = System.currentTimeMillis();
-			GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf" + instancia);
-			Solution<Integer> bestSol = grasp.solve();
-			System.out.println("maxVal = " + bestSol);
-			KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
-			System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
-			long endTime   = System.currentTimeMillis();
-			long totalTime = endTime - startTime;
-			System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
-			System.out.println("#########################################################################################\n");
+			try {
+				File myObj = new File("C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario3\\instance_" + instancia + ".txt");
+				myObj.createNewFile();
+				// Create a FileWriter object
+				// to write in the file
+				FileWriter fWriter = new FileWriter(
+					"C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario3\\instance_" + instancia + ".txt");
+	 
+				fWriter.write("Running for instance " + instancia+"\n");
+				long startTime = System.currentTimeMillis();
+				GRASP_KQBF grasp = new GRASP_KQBF(0.85, 1000, "instances/kqbf/kqbf" + instancia);
+				Solution<Integer> bestSol = grasp.solve();
+				fWriter.write("maxVal = " + bestSol+"\n");
+				KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
+				fWriter.write("weight of solution = " + evaluateCost.evaluateWeight(bestSol) + "\n");
+				long endTime   = System.currentTimeMillis();
+				long totalTime = endTime - startTime;
+				fWriter.write("Time = "+(double)totalTime/(double)1000+" seg\n");
+				fWriter.write("#########################################################################################\n");	
+	 
+				// Closing the file writing connection
+				fWriter.close();
+	 
+				// Display message for successful execution of
+				// program on the console
+				System.out.println(
+					"File is created successfully with the content.");				
+			}
+			catch (IOException e) {
+				// Print the exception
+				System.out.print(e.getMessage());
+			}
+
 		}
 
 	}
