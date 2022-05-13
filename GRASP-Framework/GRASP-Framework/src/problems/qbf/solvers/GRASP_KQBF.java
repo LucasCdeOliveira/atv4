@@ -9,6 +9,7 @@ import solutions.Solution;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -223,16 +224,20 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 	 * 
 	 */
 	public static void main(String[] args) throws IOException {
-
-		long startTime = System.currentTimeMillis();
-		GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf040");
-		Solution<Integer> bestSol = grasp.solve();
-		System.out.println("maxVal = " + bestSol);
-		KQBF evaluateCost = new KQBF("instances/kqbf/kqbf040");
-		System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
+		List<String> instancias = List.of("020", "040", "060", "080", "100", "200", "400");
+		for(String instancia: instancias) {
+			System.out.println("Running for instance " + instancia);
+			long startTime = System.currentTimeMillis();
+			GRASP_KQBF grasp = new GRASP_KQBF(0.05, 1000, "instances/kqbf/kqbf" + instancia);
+			Solution<Integer> bestSol = grasp.solve();
+			System.out.println("maxVal = " + bestSol);
+			KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
+			System.out.println("weight of solution = " + evaluateCost.evaluateWeight(bestSol));
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			System.out.println("Time = "+(double)totalTime/(double)1000+" seg");
+			System.out.println("#########################################################################################\n");
+		}
 
 	}
 

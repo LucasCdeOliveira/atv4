@@ -24,7 +24,7 @@ public class BiasFunction {
     private Double bias(Integer candidate){
         //to avoid negative values
         //bias(r) = 1/|r|
-        return 1.0/Math.abs(candidate);
+        return 1.0/(candidates.indexOf(candidate) + 1);
     }
 
     public Integer getElement(){
