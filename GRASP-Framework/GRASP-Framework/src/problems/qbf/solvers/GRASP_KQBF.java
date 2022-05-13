@@ -231,16 +231,16 @@ public class GRASP_KQBF extends AbstractGRASP<Integer> {
 
 		for(String instancia: instancias) {
 			try {
-				File myObj = new File("C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario5\\instance_" + instancia + ".txt");
+				File myObj = new File("C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario10\\instance_" + instancia + ".txt");
 				myObj.createNewFile();
 				// Create a FileWriter object
 				// to write in the file
 				FileWriter fWriter = new FileWriter(
-					"C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario5\\instance_" + instancia + ".txt");
+					"C:\\Users\\rebec\\Documents\\GitHub\\atv4\\GRASP-Framework\\GRASP-Framework\\solutions\\scenario10\\instance_" + instancia + ".txt");
 	 
 				fWriter.write("Running for instance " + instancia+"\n");
 				long startTime = System.currentTimeMillis();
-				GRASP_KQBF grasp = new GRASP_KQBF(0.85, 1000, "instances/kqbf/kqbf" + instancia);
+				GRASP_KQBF grasp = new GRASP_KQBF(0.85, 3000, "instances/kqbf/kqbf" + instancia);
 				Solution<Integer> bestSol = grasp.solve();
 				fWriter.write("maxVal = " + bestSol+"\n");
 				KQBF evaluateCost = new KQBF("instances/kqbf/kqbf" + instancia);
