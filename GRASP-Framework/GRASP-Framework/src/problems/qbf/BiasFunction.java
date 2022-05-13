@@ -2,6 +2,7 @@ package problems.qbf;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BiasFunction {
 
@@ -9,12 +10,12 @@ public class BiasFunction {
 
     public BiasFunction(ArrayList<Integer> candidates) {
         this.candidates = new ArrayList<>();
-        candidates.forEach(c -> this.candidates.add(Map.entry(c, bias(c))));
+        candidates.forEach(c -> this.candidates.add(new AbstractMap.SimpleEntry<Integer, Double>(c, bias(c))));
     }
 
     public void addCandidate(Integer candidate){
         Double biasC = bias(candidate);
-        candidates.add(Map.entry(candidate, biasC));
+        candidates.add(new AbstractMap.SimpleEntry<Integer, Double>(candidate, biasC));
     }
 
     public void removeCandidate(Integer candidate){
@@ -31,7 +32,7 @@ public class BiasFunction {
         //I'm expressing the bias(r) in a percentage mode. X% = bias(r)/totalBias
         Double totalBias = candidates.stream().mapToDouble(Map.Entry::getValue).sum();
         //Creating the percentile for each element
-        List<Double> percetile = candidates.stream().map(c -> c.getValue() * 100 / totalBias).toList();
+        List<Double> percetile = candidates.stream().map(c -> c.getValue() * 100 / totalBias).collect(Collectors.toList());
         //Getting a value from 0 to 100
         Double random = Math.random() * 100;
         Double total = percetile.get(0);
